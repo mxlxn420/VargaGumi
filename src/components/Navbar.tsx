@@ -23,13 +23,13 @@ export default function Navbar() {
       onEnter: () => {
         gsap.to(nav, { backgroundColor: 'rgba(8,4,0,0.88)', duration: 0.35, ease: 'power2.out' })
         nav.style.backdropFilter = 'blur(14px)'
-        nav.style.webkitBackdropFilter = 'blur(14px)'
+        ;(nav.style as any).webkitBackdropFilter = 'blur(14px)'
         nav.style.boxShadow = '0 1px 0 rgba(240,235,228,0.06)'
       },
       onLeaveBack: () => {
         gsap.to(nav, { backgroundColor: 'rgba(8,4,0,0)', duration: 0.35, ease: 'power2.out' })
         nav.style.backdropFilter = 'blur(0px)'
-        nav.style.webkitBackdropFilter = 'blur(0px)'
+        ;(nav.style as any).webkitBackdropFilter = 'blur(0px)'
         nav.style.boxShadow = 'none'
       },
     })

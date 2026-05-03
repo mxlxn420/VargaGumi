@@ -3,7 +3,6 @@ import { Canvas, useThree } from '@react-three/fiber'
 import { Environment, Preload } from '@react-three/drei'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import * as THREE from 'three'
 import Tire from './Tire'
 
 gsap.registerPlugin(ScrollTrigger)

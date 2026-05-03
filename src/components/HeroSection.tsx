@@ -14,7 +14,7 @@ export default function HeroSection() {
   const subRef = useRef<HTMLDivElement>(null)
   const badgeRef = useRef<HTMLDivElement>(null)
   const scrollHintRef = useRef<HTMLDivElement>(null)
-  const overlayRef = useRef<HTMLDivElement>(null)
+
 
   useEffect(() => {
     const ctx = gsap.context(() => {
