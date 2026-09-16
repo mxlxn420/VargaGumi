@@ -8,7 +8,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 const STATS = [
   { value: 10, suffix: '+', label: 'Év tapasztalat' },
-  { value: 69, suffix: '', label: 'Google értékelés' },
+  { value: 73, suffix: '', label: 'Google értékelés' },
   { value: 4.6, suffix: '★', label: 'Átlagos értékelés', decimal: true },
   { value: 1000, suffix: '+', label: 'Elégedett ügyfél' },
 ]

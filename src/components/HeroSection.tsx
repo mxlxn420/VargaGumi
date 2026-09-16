@@ -15,7 +15,7 @@ const DIRECTIONS_HREF =
   encodeURIComponent('Varga Gumi, 3800 Szikszó, Kassai út 52.')
 
 const STATS = [
-  { num: '4.6★', label: '69 Google vélemény' },
+  { num: '4.6★', label: '73 Google vélemény' },
   { num: '7', label: 'szolgáltatás' },
   { num: 'H–Szo', label: 'bejelentkezés nélkül is' },
 ]
@@ -122,7 +122,7 @@ export function HeroSection() {
                       </>
                     )}
                   </span>
-                  <span>4.6 ★ · 69</span>
+                  <span>4.6 ★ · 73</span>
                 </div>
 
                 <a href={PHONE_HREF} className={styles.phone}>

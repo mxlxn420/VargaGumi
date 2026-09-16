@@ -1,6 +1,6 @@
 // Nyitvatartás: H–P 07–17, Szo 07–12, V zárva (Europe/Budapest idő szerint)
 // Index: 0 = vasárnap … 6 = szombat
-const HOURS: ([number, number] | null)[] = [
+export const OPENING_HOURS: ([number, number] | null)[] = [
   null,
   [7, 17],
   [7, 17],
@@ -30,9 +30,14 @@ function budapestNow(date: Date) {
   }
 }
 
+// Aktuális nap (0 = vasárnap) és perc budapesti idő szerint
+export function getBudapestTime(date = new Date()) {
+  return budapestNow(date)
+}
+
 export function getOpenStatus(date = new Date()): OpenStatus {
   const { day, minutes } = budapestNow(date)
-  const today = HOURS[day]
+  const today = OPENING_HOURS[day]
 
   if (today && minutes >= today[0] * 60 && minutes < today[1] * 60) {
     return { open: true, label: `Nyitva ${today[1]}:00-ig` }
@@ -44,7 +49,7 @@ export function getOpenStatus(date = new Date()): OpenStatus {
 
   for (let offset = 1; offset <= 7; offset++) {
     const next = (day + offset) % 7
-    const hours = HOURS[next]
+    const hours = OPENING_HOURS[next]
     if (!hours) continue
     const when = offset === 1 ? 'holnap' : DAY_NAMES[next]
     return { open: false, label: `Zárva · ${when} ${hours[0]}:00-kor nyit` }
