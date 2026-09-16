@@ -1,59 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useCookieConsent } from '@/context/CookieConsentContext'
+import styles from './CookieConsentBanner.module.css'
+
+// A hero belépő animációja után jelenik meg
+const SHOW_DELAY_MS = 1500
 
 export function CookieConsentBanner() {
   const { consent, accept, decline } = useCookieConsent()
-  const [dismissed, setDismissed] = useState(false)
+  const [delayPassed, setDelayPassed] = useState(false)
 
-  if (consent !== null || dismissed) return null
+  // A késleltetés azt is kivédi, hogy a mentett döntés beolvasása előtt felvillanjon.
+  // „Süti beállítások” után (consent → null) már azonnal megjelenik.
+  useEffect(() => {
+    const timer = setTimeout(() => setDelayPassed(true), SHOW_DELAY_MS)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (consent !== null || !delayPassed) return null
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        bottom: '24px',
-        left: '24px',
-        maxWidth: '420px',
-        zIndex: 150,
-        background: 'var(--surface)',
-        border: '1px solid var(--border-strong)',
-        padding: '24px 28px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
-      }}
-    >
-      <div style={{ width: '20px', height: '1px', background: 'var(--accent)', marginBottom: '14px' }} />
-      <p style={{ fontFamily: 'var(--font-body), sans-serif', fontSize: '13px', color: 'var(--text-dim)', lineHeight: 1.7, marginBottom: '20px' }}>
-        Google Maps megjelenítéséhez sütiket használunk. Elfogadja?
+    <div className={styles.banner} role="region" aria-labelledby="cookie-title">
+      <div className={styles.head}>
+        <span className={styles.icon} aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </span>
+        <p id="cookie-title" className={styles.title}>Sütik a térképhez</p>
+      </div>
+
+      <p className={styles.text}>
+        Sütit csak a beágyazott Google Térkép használ, más követés nincs az oldalon.{' '}
+        <Link href="/adatvedelem" className={styles.link}>Adatvédelmi tájékoztató</Link>
       </p>
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <button
-          onClick={accept}
-          style={{
-            fontFamily: 'var(--font-condensed), sans-serif', fontWeight: 600,
-            fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: 'var(--bg)', background: 'var(--accent)', padding: '10px 20px',
-            transition: 'opacity 0.2s',
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-        >
-          Elfogadom
-        </button>
-        <button
-          onClick={() => { decline(); setDismissed(true) }}
-          style={{
-            fontFamily: 'var(--font-condensed), sans-serif', fontWeight: 600,
-            fontSize: '11px', letterSpacing: '0.12em', textTransform: 'uppercase',
-            color: 'var(--text-dim)', background: 'transparent',
-            border: '1px solid var(--border)', padding: '10px 20px',
-            transition: 'border-color 0.2s, color 0.2s',
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--border-strong)'; e.currentTarget.style.color = 'var(--text)' }}
-          onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-dim)' }}
-        >
+
+      <div className={styles.actions}>
+        <button type="button" className={`${styles.btn} ${styles.btnOutline}`} onClick={decline}>
           Elutasítom
+        </button>
+        <button type="button" className={`${styles.btn} ${styles.btnSolid}`} onClick={accept}>
+          Elfogadom
         </button>
       </div>
     </div>

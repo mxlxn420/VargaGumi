@@ -43,21 +43,33 @@ export function HeroSection() {
         const { motion, desktop } = context.conditions as { motion: boolean; desktop: boolean }
         if (!motion) return
 
+        // A kezdőállapotot a CSS adja (rejtve), ezért fromTo: a cél mindig a végleges helyzet.
+        // A címsorok 170%-ról indulnak, hogy a kivágásból semmi ne lógjon be.
+        const tire = document.querySelector<HTMLElement>('[data-hero="tire"]')
+        const tireOpacity = tire ? Number(getComputedStyle(tire).getPropertyValue('--tire-opacity')) || 1 : 1
+
         const tl = gsap.timeline({ delay: 0.15, defaults: { ease: 'power4.out' } })
-        tl.from('[data-hero="eyebrow"]', { opacity: 0, y: 12, duration: 0.7 })
-          .from('[data-hero="line"]', { yPercent: 110, duration: 1.1, stagger: 0.09 }, '-=0.5')
-          .from('[data-hero="lead"]', { opacity: 0, y: 16, duration: 0.8 }, '-=0.7')
-          .from(
+        tl.fromTo('[data-hero="eyebrow"]', { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.7 })
+          .fromTo('[data-hero="line"]', { y: 0, yPercent: 170 }, { y: 0, yPercent: 0, duration: 1.1, stagger: 0.09 }, '-=0.5')
+          .fromTo('[data-hero="lead"]', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8 }, '-=0.7')
+          .fromTo(
             '[data-hero="tire"]',
-            { opacity: 0, scale: 0.85, rotation: -60, duration: 1.6, ease: 'power3.out' },
+            { opacity: 0, scale: 0.85, rotation: -60 },
+            { opacity: tireOpacity, scale: 1, rotation: 0, duration: 1.6, ease: 'power3.out' },
             0.2
           )
-          .from(
+          .fromTo(
             '[data-hero="card"]',
-            { opacity: 0, y: 60, rotation: desktop ? 6 : 0, duration: 1.1 },
+            { opacity: 0, y: 60, rotation: desktop ? 6 : 0 },
+            { opacity: 1, y: 0, rotation: 0, duration: 1.1 },
             0.55
           )
-          .from('[data-hero="stat"]', { opacity: 0, y: 14, duration: 0.6, stagger: 0.08 }, '-=0.6')
+          .fromTo(
+            '[data-hero="stat"]',
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.6, stagger: 0.08 },
+            '-=0.6'
+          )
 
         // A gumi görgetésre lassan forog
         gsap.to('[data-hero="tire-spin"]', {

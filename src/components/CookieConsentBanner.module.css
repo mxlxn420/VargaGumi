@@ -1,0 +1,134 @@
+.banner {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  z-index: 150;
+  width: min(360px, calc(100vw - 48px));
+  padding: 20px 22px 22px;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 28px 60px -28px rgba(30, 58, 92, 0.5),
+    0 4px 14px -8px rgba(30, 58, 92, 0.2);
+  animation: enter 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+}
+
+.title {
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.text {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.link {
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.link:hover {
+  text-decoration-thickness: 2px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btnOutline {
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+
+.btnOutline:hover {
+  border-color: var(--text);
+  background: var(--surface);
+}
+
+.btnSolid {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.btnSolid:hover {
+  background: color-mix(in srgb, var(--accent), black 18%);
+}
+
+@media (max-width: 560px) {
+  .banner {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    width: auto;
+    padding: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    animation-name: fade;
+  }
+
+  @keyframes fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
