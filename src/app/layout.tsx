@@ -1,26 +1,19 @@
 import type { Metadata } from 'next'
-import { Playfair_Display, Barlow_Condensed, Barlow } from 'next/font/google'
+import { Fraunces, Manrope } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/Providers'
 
-const playfair = Playfair_Display({
+const fraunces = Fraunces({
   variable: '--font-display',
-  subsets: ['latin'],
-  weight: ['700', '800', '900'],
+  subsets: ['latin', 'latin-ext'],
+  style: ['normal', 'italic'],
+  axes: ['opsz'],
   display: 'swap',
 })
 
-const barlowCondensed = Barlow_Condensed({
-  variable: '--font-condensed',
-  subsets: ['latin'],
-  weight: ['400', '600'],
-  display: 'swap',
-})
-
-const barlow = Barlow({
+const manrope = Manrope({
   variable: '--font-body',
-  subsets: ['latin'],
-  weight: ['400', '500'],
+  subsets: ['latin', 'latin-ext'],
   display: 'swap',
 })
 
@@ -50,7 +43,8 @@ export default function RootLayout({
   return (
     <html
       lang="hu"
-      className={`${playfair.variable} ${barlowCondensed.variable} ${barlow.variable}`}
+      data-theme="light"
+      className={`${fraunces.variable} ${manrope.variable}`}
     >
       <body>
         <Providers>{children}</Providers>

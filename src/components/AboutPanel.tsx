@@ -1,160 +1,114 @@
 'use client'
 
 import { useRef, useEffect } from 'react'
+import type { MouseEvent } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import styles from './AboutPanel.module.css'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const FACTS = [
+  {
+    title: 'Bejelentkezés nélkül is',
+    text: 'Ugorjon be nyitvatartási időben – előzetes időpontfoglalás nélkül is fogadjuk.',
+  },
+  {
+    title: 'Személyautótól a kisteherig',
+    text: 'Személyautók, SUV-ok és kisteherautók gumijait is szereljük és javítjuk.',
+  },
+  {
+    title: 'A gumiját is megőrizzük',
+    text: 'Szezonális gumitárolást is vállalunk, így nem kell otthon helyet keresnie neki.',
+  },
+]
 
 export function AboutPanel() {
   const ref = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        '.ab-elem',
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.9,
-          ease: 'power3.out',
-          stagger: 0.1,
-          scrollTrigger: { trigger: ref.current, start: 'top 75%' },
-        }
-      )
-    }, ref)
-    return () => ctx.revert()
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.from('[data-about="intro"]', {
+        opacity: 0,
+        y: 32,
+        duration: 0.9,
+        ease: 'power3.out',
+        stagger: 0.1,
+        scrollTrigger: { trigger: ref.current, start: 'top 72%' },
+      })
+
+      gsap.from('[data-about="item"]', {
+        opacity: 0,
+        y: 28,
+        duration: 0.8,
+        ease: 'power3.out',
+        stagger: 0.12,
+        scrollTrigger: { trigger: '[data-about="list"]', start: 'top 78%' },
+      })
+
+      gsap.from('[data-about="year"]', {
+        yPercent: 40,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power4.out',
+        scrollTrigger: { trigger: '[data-about="year"]', start: 'top 90%' },
+      })
+    })
+
+    return () => mm.revert()
   }, [])
 
+  const goToContact = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
-    <section
-      id="about"
-      ref={ref}
-      style={{
-        background: 'var(--surface)',
-        padding: 'clamp(80px, 12vw, 160px) 0',
-        borderTop: '1px solid var(--border)',
-        borderBottom: '1px solid var(--border)',
-      }}
-    >
+    <section id="about" ref={ref} className={styles.about} aria-labelledby="about-title">
       <div className="container">
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 'clamp(40px, 8vw, 120px)',
-            alignItems: 'start',
-          }}
-        >
-          {/* Left */}
+        <div className={styles.grid}>
           <div>
-            <p className="label ab-elem" style={{ opacity: 0, marginBottom: '32px' }}>
-              Rólunk
-            </p>
-            <h2
-              className="ab-elem"
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontWeight: 900,
-                fontSize: 'clamp(36px, 6vw, 72px)',
-                textTransform: 'none',
-                lineHeight: 1.05,
-                letterSpacing: '-0.01em',
-                color: 'var(--text)',
-                opacity: 0,
-                marginBottom: '40px',
-              }}
-            >
-              Szikszó<br />
-              <span style={{ color: 'var(--accent)' }}>megbízható</span><br />
-              gumiszervize.
+            <p className={styles.eyebrow} data-about="intro">Rólunk</p>
+            <h2 id="about-title" className={styles.title} data-about="intro">
+              Szikszói műhely, <span className={styles.accent}>ahová bármikor</span> beugorhat.
             </h2>
-            <p
-              className="ab-elem"
-              style={{
-                fontFamily: 'var(--font-body), sans-serif',
-                fontSize: 'clamp(15px, 1.8vw, 18px)',
-                color: 'var(--text-dim)',
-                lineHeight: 1.75,
-                maxWidth: '380px',
-                opacity: 0,
-              }}
-            >
-              Helyi vállalkozás, nem lánc, nem franchise. Személyesen felelünk minden elvégzett munkáért — mert mi is itt élünk Szikszón és környékén.
+            <p className={styles.intro} data-about="intro">
+              Helyi vállalkozás vagyunk – nem lánc, nem franchise. Itt, a Kassai úton
+              szereljük a környék autóinak gumijait, és személyesen felelünk minden munkáért.
             </p>
+
+            <div className={styles.since}>
+              <span className={styles.year} data-about="year" aria-hidden="true">Szikszó</span>
+              <span className={styles.sinceLabel}>Kassai út 52.</span>
+            </div>
           </div>
 
-          {/* Right */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px', background: 'var(--border)' }}>
-            {[
-              { num: '10+', label: 'Év tapasztalat', sub: '2013 óta a helyiek bizalma' },
-              { num: '4.6★', label: 'Google értékelés', sub: '69 visszajelzés alapján' },
-              { num: '100%', label: 'Elégedett ügyfél', sub: 'Minden munkát személyesen vállalunk' },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className="ab-elem"
-                style={{
-                  background: 'var(--surface)',
-                  padding: 'clamp(20px, 3vw, 32px) clamp(24px, 3vw, 36px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '24px',
-                  opacity: 0,
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--font-display), serif',
-                    fontWeight: 900,
-                    fontSize: 'clamp(28px, 4vw, 48px)',
-                    color: 'var(--accent)',
-                    lineHeight: 1,
-                    letterSpacing: '-0.01em',
-                    minWidth: '80px',
-                  }}
-                >
-                  {item.num}
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-display), serif',
-                      fontWeight: 800,
-                      fontSize: 'clamp(14px, 2vw, 18px)',
-                      textTransform: 'none',
-                      letterSpacing: '0',
-                      color: 'var(--text)',
-                      lineHeight: 1,
-                      marginBottom: '6px',
-                    }}
-                  >
-                    {item.label}
+          <div>
+            <ol className={styles.list} data-about="list">
+              {FACTS.map((fact, i) => (
+                <li key={fact.title} className={styles.item} data-about="item">
+                  <span className={styles.num} aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div>
+                    <h3 className={styles.itemTitle}>{fact.title}</h3>
+                    <p className={styles.itemText}>{fact.text}</p>
                   </div>
-                  <div
-                    style={{
-                      fontFamily: 'var(--font-body), sans-serif',
-                      fontSize: '13px',
-                      color: 'var(--text-dim)',
-                    }}
-                  >
-                    {item.sub}
-                  </div>
-                </div>
-              </div>
-            ))}
+                </li>
+              ))}
+            </ol>
+
+            <a href="#contact" onClick={goToContact} className={styles.more}>
+              Nyitvatartás és útvonal
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </a>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          #about .container > div {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </section>
   )
 }

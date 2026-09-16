@@ -1,262 +1,242 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { getOpenStatus } from '@/lib/openingHours'
+import type { OpenStatus } from '@/lib/openingHours'
+import styles from './HeroSection.module.css'
+
+gsap.registerPlugin(ScrollTrigger)
+
+const PHONE_HREF = 'tel:+3646796692'
+const DIRECTIONS_HREF =
+  'https://www.google.com/maps/dir/?api=1&destination=' +
+  encodeURIComponent('Varga Gumi, 3800 Szikszó, Kassai út 52.')
+
+const STATS = [
+  { num: '4.6★', label: '69 Google vélemény' },
+  { num: '7', label: 'szolgáltatás' },
+  { num: 'H–Szo', label: 'bejelentkezés nélkül is' },
+]
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null)
+  const [status, setStatus] = useState<OpenStatus | null>(null)
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ delay: 0.1 })
+    const update = () => setStatus(getOpenStatus())
+    update()
+    const timer = setInterval(update, 60_000)
+    return () => clearInterval(timer)
+  }, [])
 
-      tl.fromTo(
-        '.h-line',
-        { y: '110%' },
-        { y: '0%', duration: 1, ease: 'power4.out', stagger: 0.07 }
-      )
-        .fromTo(
-          '.h-divider',
-          { scaleY: 0 },
-          { scaleY: 1, duration: 0.8, ease: 'power3.out', transformOrigin: 'top' },
-          '-=0.5'
-        )
-        .fromTo(
-          '.h-right',
-          { opacity: 0, x: 20 },
-          { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1 },
-          '-=0.6'
-        )
-        .fromTo(
-          '.h-meta',
-          { opacity: 0, y: 10 },
-          { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', stagger: 0.08 },
-          '-=0.4'
-        )
-    }, ref)
-    return () => ctx.revert()
+  useEffect(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add(
+      {
+        motion: '(prefers-reduced-motion: no-preference)',
+        desktop: '(min-width: 901px)',
+      },
+      (context) => {
+        const { motion, desktop } = context.conditions as { motion: boolean; desktop: boolean }
+        if (!motion) return
+
+        const tl = gsap.timeline({ delay: 0.15, defaults: { ease: 'power4.out' } })
+        tl.from('[data-hero="eyebrow"]', { opacity: 0, y: 12, duration: 0.7 })
+          .from('[data-hero="line"]', { yPercent: 110, duration: 1.1, stagger: 0.09 }, '-=0.5')
+          .from('[data-hero="lead"]', { opacity: 0, y: 16, duration: 0.8 }, '-=0.7')
+          .from(
+            '[data-hero="tire"]',
+            { opacity: 0, scale: 0.85, rotation: -60, duration: 1.6, ease: 'power3.out' },
+            0.2
+          )
+          .from(
+            '[data-hero="card"]',
+            { opacity: 0, y: 60, rotation: desktop ? 6 : 0, duration: 1.1 },
+            0.55
+          )
+          .from('[data-hero="stat"]', { opacity: 0, y: 14, duration: 0.6, stagger: 0.08 }, '-=0.6')
+
+        // A gumi görgetésre lassan forog
+        gsap.to('[data-hero="tire-spin"]', {
+          rotation: 140,
+          ease: 'none',
+          svgOrigin: '200 200',
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.6,
+          },
+        })
+      }
+    )
+
+    return () => mm.revert()
   }, [])
 
   return (
-    <section
-      ref={ref}
-      style={{
-        minHeight: '100svh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        background: 'var(--bg)',
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
-      {/* Subtle top border */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '1px',
-          background: 'var(--border)',
-        }}
-      />
+    <section ref={ref} id="top" className={styles.hero} aria-labelledby="hero-title">
+      <div className="container">
+        <div className={styles.grid}>
+          <div className={styles.text}>
+            <p className={styles.eyebrow} data-hero="eyebrow">
+              Varga Gumi
+              <span className={styles.sep} aria-hidden="true" />
+              Gumiszerviz Szikszón
+            </p>
 
-      <div
-        className="container"
-        style={{ paddingTop: 'calc(var(--nav-h) + 60px)', paddingBottom: '80px' }}
-      >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr',
-            gap: 0,
-            alignItems: 'center',
-            minHeight: 'clamp(320px, 50vh, 560px)',
-          }}
-        >
-          {/* LEFT — company name */}
-          <div style={{ paddingRight: 'clamp(32px, 5vw, 80px)' }}>
-            {['VARGA', 'GUMI'].map((line, i) => (
-              <div
-                key={i}
-                style={{ overflow: 'hidden', lineHeight: 0.88 }}
-              >
-                <div
-                  className="h-line"
-                  style={{
-                    fontFamily: 'var(--font-display), serif',
-                    fontWeight: 900,
-                    fontSize: 'clamp(60px, 10vw, 136px)',
-                    textTransform: 'uppercase',
-                    letterSpacing: '-0.01em',
-                    lineHeight: 0.92,
-                    color: i === 1 ? 'var(--accent)' : 'var(--text)',
-                  }}
-                >
-                  {line}
+            <h1 id="hero-title" className={styles.title}>
+              <span className={styles.line}>
+                <span className={styles.lineInner} data-hero="line">Defekt?</span>
+              </span>
+              <span className={styles.line}>
+                <span className={`${styles.lineInner} ${styles.accent}`} data-hero="line">Hívjon,</span>
+              </span>
+              <span className={styles.line}>
+                <span className={styles.lineInner} data-hero="line">megoldjuk.</span>
+              </span>
+            </h1>
+
+            <p className={styles.lead} data-hero="lead">
+              Gumiszerelés, defektjavítás, centrírozás és futómű-beállítás
+              helyben, gyorsan, korrekt áron.
+            </p>
+          </div>
+
+          <div className={styles.visual}>
+            <div className={styles.tire} data-hero="tire" aria-hidden="true">
+              <TireGraphic />
+            </div>
+
+            <div className={styles.cardWrap} data-hero="card">
+              <div className={styles.card}>
+                <div className={styles.cardTop}>
+                  <span className={styles.status}>
+                    {status && (
+                      <>
+                        <span className={`${styles.dot} ${status.open ? styles.dotOpen : ''}`} />
+                        {status.label}
+                      </>
+                    )}
+                  </span>
+                  <span>4.6 ★ · 69</span>
+                </div>
+
+                <a href={PHONE_HREF} className={styles.phone}>
+                  (06 46)
+                  <br />
+                  796 692
+                </a>
+                <p className={styles.address}>3800 Szikszó, Kassai út 52.</p>
+
+                <div className={styles.actions}>
+                  <a href={PHONE_HREF} className={`${styles.btn} ${styles.btnPrimary}`}>
+                    <PhoneIcon />
+                    Hívás most
+                  </a>
+                  <a
+                    href={DIRECTIONS_HREF}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`${styles.btn} ${styles.btnGhost}`}
+                  >
+                    Útvonal
+                    <ArrowIcon />
+                  </a>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* CENTER — vertical divider */}
-          <div
-            className="h-divider"
-            style={{
-              width: '1px',
-              alignSelf: 'stretch',
-              background: 'var(--border-strong)',
-              transformOrigin: 'top',
-            }}
-          />
-
-          {/* RIGHT — phone + tagline */}
-          <div
-            style={{
-              paddingLeft: 'clamp(32px, 5vw, 80px)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gap: '0',
-            }}
-          >
-            <div
-              className="h-right"
-              style={{
-                fontFamily: 'var(--font-condensed), sans-serif',
-                fontSize: '10px',
-                fontWeight: 600,
-                letterSpacing: '0.22em',
-                textTransform: 'uppercase',
-                color: 'var(--text-dim)',
-                marginBottom: '20px',
-                opacity: 0,
-              }}
-            >
-              Telefonszám
-            </div>
-
-            <a
-              href="tel:+3646796692"
-              className="h-right"
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontWeight: 900,
-                fontSize: 'clamp(36px, 6vw, 80px)',
-                letterSpacing: '0',
-                lineHeight: 0.95,
-                color: 'var(--accent)',
-                textTransform: 'none',
-                display: 'block',
-                marginBottom: 'clamp(20px, 3vw, 40px)',
-                opacity: 0,
-                transition: 'color 0.2s',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--accent)')}
-            >
-              (06 46)<br />796 692
-            </a>
-
-            <div
-              style={{
-                width: '32px',
-                height: '1px',
-                background: 'var(--border-strong)',
-                marginBottom: 'clamp(16px, 2vw, 28px)',
-              }}
-              className="h-right"
-            />
-
-            <div
-              className="h-meta"
-              style={{
-                fontFamily: 'var(--font-body), sans-serif',
-                fontSize: 'clamp(14px, 1.5vw, 17px)',
-                color: 'var(--text-dim)',
-                lineHeight: 1.6,
-                marginBottom: '6px',
-                opacity: 0,
-              }}
-            >
-              Szikszó, Kassai út 52.
-            </div>
-
-            <div
-              className="h-meta"
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontWeight: 700,
-                fontSize: 'clamp(18px, 2.5vw, 28px)',
-                textTransform: 'none',
-                letterSpacing: '0',
-                color: 'var(--text)',
-                lineHeight: 1.2,
-                opacity: 0,
-              }}
-            >
-              Hívjon,<br />megoldjuk.
             </div>
           </div>
         </div>
 
-        {/* Bottom metadata row */}
-        <div
-          style={{
-            marginTop: 'clamp(48px, 8vw, 100px)',
-            borderTop: '1px solid var(--border)',
-            paddingTop: '24px',
-            display: 'flex',
-            gap: '40px',
-            flexWrap: 'wrap',
-          }}
-        >
-          {[
-            { label: 'Tapasztalat', value: '10+ év' },
-            { label: 'Nyitvatartás', value: 'H–P 07–17 · Szo 07–12' },
-            { label: 'Google értékelés', value: '4.6 ★ · 69 vélemény' },
-          ].map((item, i) => (
-            <div key={i} className="h-meta" style={{ opacity: 0 }}>
-              <div
-                style={{
-                  fontFamily: 'var(--font-condensed), sans-serif',
-                  fontSize: '9px',
-                  fontWeight: 600,
-                  letterSpacing: '0.2em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text-muted)',
-                  marginBottom: '4px',
-                }}
-              >
-                {item.label}
-              </div>
-              <div
-                style={{
-                  fontFamily: 'var(--font-condensed), sans-serif',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  letterSpacing: '0.06em',
-                  color: 'var(--text-dim)',
-                }}
-              >
-                {item.value}
-              </div>
-            </div>
+        <ul className={styles.stats}>
+          {STATS.map((s) => (
+            <li key={s.label} className={styles.stat} data-hero="stat">
+              <span className={styles.statNum}>{s.num}</span>
+              {s.label}
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
-
-      <style>{`
-        @media (max-width: 768px) {
-          .hero-grid {
-            grid-template-columns: 1fr !important;
-          }
-          .h-divider {
-            display: none !important;
-          }
-        }
-      `}</style>
     </section>
+  )
+}
+
+function TireGraphic() {
+  const treads = Array.from({ length: 36 }, (_, i) => i * 10)
+  const spokes = Array.from({ length: 5 }, (_, i) => i * 72)
+  const nuts = Array.from({ length: 5 }, (_, i) => i * 72 + 36)
+
+  return (
+    <svg viewBox="0 0 400 400" width="100%" height="100%" fill="none" stroke="currentColor">
+      <g data-hero="tire-spin">
+        {/* Futófelület */}
+        <circle cx="200" cy="200" r="188" strokeWidth="1.5" />
+        <circle cx="200" cy="200" r="150" strokeWidth="1.5" />
+        {treads.map((deg) => (
+          <path
+            key={deg}
+            d="M200 16 L206 16 L204 50 L196 50 Z"
+            transform={`rotate(${deg} 200 200)`}
+            fill="currentColor"
+            fillOpacity="0.9"
+            stroke="none"
+          />
+        ))}
+        {treads.map((deg) => (
+          <line
+            key={`g${deg}`}
+            x1="200" y1="14" x2="200" y2="52"
+            transform={`rotate(${deg + 5} 200 200)`}
+            strokeWidth="1"
+            strokeOpacity="0.35"
+          />
+        ))}
+        {/* Oldalfal */}
+        <circle cx="200" cy="200" r="138" strokeWidth="1" strokeOpacity="0.5" strokeDasharray="2 6" />
+        {/* Felni */}
+        <circle cx="200" cy="200" r="112" strokeWidth="2" />
+        <circle cx="200" cy="200" r="100" strokeWidth="1" strokeOpacity="0.5" />
+        {spokes.map((deg) => (
+          <path
+            key={`s${deg}`}
+            d="M192 170 L186 104 Q200 98 214 104 L208 170 Z"
+            transform={`rotate(${deg} 200 200)`}
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+        ))}
+        <circle cx="200" cy="200" r="34" strokeWidth="2" />
+        {nuts.map((deg) => (
+          <circle
+            key={`n${deg}`}
+            cx="200" cy="178" r="4"
+            transform={`rotate(${deg} 200 200)`}
+            fill="currentColor"
+            stroke="none"
+          />
+        ))}
+        <circle cx="200" cy="200" r="11" fill="currentColor" stroke="none" />
+      </g>
+    </svg>
+  )
+}
+
+function PhoneIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 9a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.9.37 1.86.6 2.81.7A2 2 0 0122 16.92z" />
+    </svg>
+  )
+}
+
+function ArrowIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M7 17L17 7M9 7h8v8" />
+    </svg>
   )
 }

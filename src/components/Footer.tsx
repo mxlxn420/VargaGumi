@@ -123,7 +123,7 @@ function FLine({ children, style }: { children: React.ReactNode; style?: React.C
 
 function PrivacyModal({ onClose }: { onClose: () => void }) {
   return (
-    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(12,11,10,0.88)', backdropFilter: 'blur(8px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'color-mix(in srgb, var(--bg) 88%, transparent)', backdropFilter: 'blur(8px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div onClick={(e) => e.stopPropagation()} style={{ background: 'var(--surface)', border: '1px solid var(--border)', maxWidth: '600px', width: '100%', maxHeight: '80vh', overflow: 'auto', padding: 'clamp(32px, 5vw, 48px)', position: 'relative' }}>
         <button onClick={onClose} style={{ position: 'absolute', top: '20px', right: '20px', color: 'var(--text-dim)', fontSize: '18px', lineHeight: 1 }} aria-label="Bezárás">×</button>
         <h2 style={{ fontFamily: 'var(--font-display), serif', fontWeight: 900, fontSize: '28px', textTransform: 'uppercase', lineHeight: 1, color: 'var(--text)', marginBottom: '24px' }}>Adatvédelmi tájékoztató</h2>

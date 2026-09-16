@@ -1,0 +1,241 @@
+.services {
+  padding: clamp(88px, 12vw, 160px) 0 clamp(24px, 4vw, 56px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(40px, 6vw, 96px);
+  align-items: start;
+}
+
+/* Bal oldal – görgetés közben helyben marad */
+.intro {
+  position: sticky;
+  top: calc(14px + 58px + 48px);
+}
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.title {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.accent {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.lead {
+  margin-top: 24px;
+  max-width: 360px;
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.65;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.call {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  margin-top: 28px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--bg);
+  font-size: 15px;
+  font-weight: 700;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.call:hover {
+  background: color-mix(in srgb, var(--accent), black 18%);
+}
+
+.call:active {
+  transform: scale(0.97);
+}
+
+.progress {
+  display: flex;
+  gap: 6px;
+  margin-top: 40px;
+  list-style: none;
+}
+
+.progressDot {
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  transition: background 0.3s ease, width 0.3s ease;
+}
+
+.progressDotActive {
+  width: 40px;
+  background: var(--accent);
+}
+
+/* Kártyák */
+.stack {
+  list-style: none;
+}
+
+/* Minden kártya ugyanott áll meg, így az új teljesen eltakarja az előzőt */
+.cardSlot {
+  position: sticky;
+  top: calc(14px + 58px + 32px);
+}
+
+/* Felső margó: az alsó beleszámítana a sticky határba, és a kupac szétcsúszna elengedéskor */
+.cardSlot + .cardSlot {
+  margin-top: clamp(48px, 10vh, 120px);
+}
+
+/* Ráhagyás, hogy az utolsó kártya is megálljon a kupac tetején, mielőtt továbbgörget */
+.spacer {
+  height: 26vh;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(140px, 16vw, 220px);
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  height: clamp(340px, 52vh, 420px);
+  padding: clamp(28px, 3.2vw, 44px);
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--bg), white 45%);
+  border: 1px solid var(--border);
+  box-shadow: 0 -18px 40px -30px rgba(31, 26, 21, 0.3);
+  transform-origin: 50% 0;
+}
+
+.cardAccent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.count {
+  font-family: var(--font-display), serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+.cardTitle {
+  margin-top: 10px;
+  font-family: var(--font-display), serif;
+  font-weight: 700;
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.cardText {
+  margin-top: 14px;
+  max-width: 420px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+  list-style: none;
+}
+
+.tag {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: var(--surface);
+}
+
+.illustration {
+  width: 100%;
+  aspect-ratio: 1;
+  color: var(--accent);
+}
+
+.cardAccent .count,
+.cardAccent .cardTitle {
+  color: var(--bg);
+}
+
+.cardAccent .cardText {
+  color: color-mix(in srgb, var(--bg) 78%, transparent);
+}
+
+.cardAccent .tag {
+  color: var(--bg);
+  background: color-mix(in srgb, var(--bg) 14%, transparent);
+}
+
+.cardAccent .illustration {
+  color: var(--bg);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+
+  .intro {
+    position: static;
+  }
+
+  .progress {
+    display: none;
+  }
+
+  .cardSlot {
+    top: calc(14px + 58px + 16px);
+  }
+
+  .cardSlot + .cardSlot {
+    margin-top: 32px;
+  }
+
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    height: 430px;
+    gap: 16px;
+    border-radius: 22px;
+  }
+
+  .illustration {
+    order: -1;
+    width: 88px;
+  }
+
+  .cardText {
+    font-size: 15px;
+  }
+}

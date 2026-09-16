@@ -1,240 +1,276 @@
-﻿'use client'
+'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import type { MouseEvent } from 'react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { getOpenStatus } from '@/lib/openingHours'
+import type { OpenStatus } from '@/lib/openingHours'
+import styles from './Navbar.module.css'
+
+const LINKS = [
+  { label: 'Rólunk', id: 'about' },
+  { label: 'Szolgáltatások', id: 'services' },
+  { label: 'Vélemények', id: 'reviews' },
+  { label: 'Kapcsolat', id: 'contact' },
+]
+
+const PHONE_HREF = 'tel:+3646796692'
+const PHONE_LABEL = '(06 46) 796 692'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [active, setActive] = useState<string | null>(null)
+  const [status, setStatus] = useState<OpenStatus | null>(null)
+  const menuBtnRef = useRef<HTMLButtonElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+  const pendingScroll = useRef<string | null>(null)
+  const reduceMotion = useReducedMotion()
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const scrollTo = (id: string) => {
+  // Nyitvatartás csak kliensen (hydration-biztos), percenként frissül
+  useEffect(() => {
+    const update = () => setStatus(getOpenStatus())
+    update()
+    const timer = setInterval(update, 60_000)
+    return () => clearInterval(timer)
+  }, [])
+
+  // Aktív szekció követése
+  useEffect(() => {
+    const visible = new Map<string, boolean>()
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => visible.set(e.target.id, e.isIntersecting))
+        const current = LINKS.find((l) => visible.get(l.id))
+        setActive(current ? current.id : null)
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    )
+    LINKS.forEach((l) => {
+      const el = document.getElementById(l.id)
+      if (el) observer.observe(el)
+    })
+    return () => observer.disconnect()
+  }, [])
+
+  // Mobil menü: görgetés tiltása, Esc, fókusz
+  useEffect(() => {
+    if (!menuOpen) {
+      if (pendingScroll.current) {
+        document.getElementById(pendingScroll.current)?.scrollIntoView({ behavior: 'smooth' })
+        pendingScroll.current = null
+      }
+      return
+    }
+    const root = document.documentElement
+    root.style.overflow = 'hidden'
+    closeBtnRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeMenu()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      root.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [menuOpen])
+
+  const closeMenu = () => {
     setMenuOpen(false)
+    menuBtnRef.current?.focus({ preventScroll: true })
+  }
+
+  const goTo = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault()
+    if (menuOpen) {
+      pendingScroll.current = id
+      setMenuOpen(false)
+      return
+    }
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const goTop = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    setMenuOpen(false)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   return (
-    <nav
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-        height: 'var(--nav-h)',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 var(--px)',
-        transition: 'background 0.4s, backdrop-filter 0.4s, border-color 0.4s',
-        background: scrolled ? 'rgba(12,11,10,0.88)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(20px)' : 'none',
-        borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
-      }}
-    >
-      <div
-        style={{
-          width: '100%',
-          maxWidth: 'var(--max-w)',
-          marginInline: 'auto',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          style={{
-            fontFamily: 'var(--font-display), serif',
-            fontWeight: 900,
-            fontSize: '18px',
-            letterSpacing: '0.04em',
-            textTransform: 'uppercase',
-            color: 'var(--text)',
-            lineHeight: 1,
-          }}
+    <>
+      <header className={styles.wrap}>
+        <nav
+          aria-label="Főmenü"
+          className={`${styles.pill} ${scrolled ? styles.scrolled : ''}`}
         >
-          VARGA <span style={{ color: 'var(--accent)' }}>GUMI</span>
-        </button>
-
-        <div className="nav-links" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
-          {[
-            { label: 'Szolgáltatások', id: 'services' },
-            { label: 'Rólunk', id: 'about' },
-            { label: 'Vélemények', id: 'reviews' },
-          ].map((link) => (
-            <NavLink key={link.id} onClick={() => scrollTo(link.id)}>
-              {link.label}
-            </NavLink>
-          ))}
-          <a
-            href="tel:+3646796692"
-            style={{
-              fontFamily: 'var(--font-condensed), sans-serif',
-              fontWeight: 600,
-              fontSize: '12px',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--bg)',
-              background: 'var(--accent)',
-              padding: '10px 20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '7px',
-              transition: 'opacity 0.2s',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.85')}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
-          >
-            <PhoneIcon />
-            (06 46) 796 692
+          <a href="/" onClick={goTop} className={styles.logo}>
+            Varga Gumi
           </a>
-        </div>
 
-        {/* Mobile hamburger */}
-        <button
-          className="nav-burger"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-label="Menü"
-          style={{ display: 'none', flexDirection: 'column', gap: '5px', padding: '8px' }}
-        >
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                display: 'block',
-                width: '22px',
-                height: '1.5px',
-                background: 'var(--text)',
-                transition: 'transform 0.2s, opacity 0.2s',
-                opacity: menuOpen && i === 1 ? 0 : 1,
-                transform: menuOpen
-                  ? i === 0 ? 'rotate(45deg) translate(5px,5px)'
-                  : i === 2 ? 'rotate(-45deg) translate(5px,-5px)'
-                  : 'none'
-                  : 'none',
-              }}
-            />
-          ))}
-        </button>
-      </div>
+          <ul className={styles.links}>
+            {LINKS.map((link) => {
+              const isActive = active === link.id
+              return (
+                <li key={link.id}>
+                  <a
+                    href={`#${link.id}`}
+                    onClick={(e) => goTo(e, link.id)}
+                    className={`${styles.link} ${isActive ? styles.linkActive : ''}`}
+                    aria-current={isActive ? 'location' : undefined}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active"
+                        className={styles.activeBg}
+                        transition={
+                          reduceMotion
+                            ? { duration: 0 }
+                            : { type: 'spring', stiffness: 420, damping: 36 }
+                        }
+                      />
+                    )}
+                    <span className={styles.linkLabel}>{link.label}</span>
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
 
-      {menuOpen && (
-        <div
-          style={{
-            position: 'absolute',
-            top: 'var(--nav-h)',
-            left: 0,
-            right: 0,
-            background: 'rgba(12,11,10,0.97)',
-            backdropFilter: 'blur(20px)',
-            borderBottom: '1px solid var(--border)',
-            padding: '24px var(--px)',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0',
-          }}
-        >
-          {[
-            { label: 'Szolgáltatások', id: 'services' },
-            { label: 'Rólunk', id: 'about' },
-            { label: 'Vélemények', id: 'reviews' },
-            { label: 'Kapcsolat', id: 'contact' },
-          ].map((link) => (
-            <button
-              key={link.id}
-              onClick={() => scrollTo(link.id)}
-              style={{
-                fontFamily: 'var(--font-display), serif',
-                fontWeight: 800,
-                fontSize: '22px',
-                textTransform: 'uppercase',
-                letterSpacing: '-0.01em',
-                color: 'var(--text)',
-                textAlign: 'left',
-                padding: '14px 0',
-                borderBottom: '1px solid var(--border)',
-              }}
+          <div className={styles.right}>
+            {status && (
+              <span className={styles.status}>
+                <span className={`${styles.dot} ${status.open ? styles.dotOpen : ''}`} aria-hidden="true" />
+                {status.label}
+              </span>
+            )}
+            <a href={PHONE_HREF} className={styles.call}>
+              <PhoneIcon />
+              <span className={styles.callLong}>{PHONE_LABEL}</span>
+              <span className={styles.callShort}>Hívás</span>
+            </a>
+          </div>
+
+          <div className={styles.mobileActions}>
+            <a
+              href={PHONE_HREF}
+              className={`${styles.iconBtn} ${styles.iconBtnFilled}`}
+              aria-label={`Hívás: ${PHONE_LABEL}`}
             >
-              {link.label}
+              <PhoneIcon />
+            </a>
+            <button
+              ref={menuBtnRef}
+              type="button"
+              className={styles.iconBtn}
+              onClick={() => setMenuOpen(true)}
+              aria-label="Menü megnyitása"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+            >
+              <MenuIcon />
             </button>
-          ))}
-          <a
-            href="tel:+3646796692"
-            style={{
-              marginTop: '16px',
-              fontFamily: 'var(--font-condensed), sans-serif',
-              fontWeight: 600,
-              fontSize: '14px',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              color: 'var(--bg)',
-              background: 'var(--accent)',
-              padding: '16px 24px',
-              textAlign: 'center',
-              display: 'block',
-            }}
+          </div>
+        </nav>
+      </header>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menü"
+            className={styles.overlay}
+            initial={reduceMotion ? { opacity: 0 } : { clipPath: 'circle(0% at calc(100% - 45px) 43px)' }}
+            animate={reduceMotion ? { opacity: 1 } : { clipPath: 'circle(150% at calc(100% - 45px) 43px)' }}
+            exit={reduceMotion ? { opacity: 0 } : { clipPath: 'circle(0% at calc(100% - 45px) 43px)' }}
+            transition={{ duration: reduceMotion ? 0.15 : 0.55, ease: [0.65, 0, 0.35, 1] }}
           >
-            (06 46) 796 692
-          </a>
-        </div>
-      )}
+            <div className={styles.overlayHead}>
+              <a href="/" onClick={goTop} className={styles.logo}>
+                Varga Gumi
+              </a>
+              <button
+                ref={closeBtnRef}
+                type="button"
+                className={`${styles.iconBtn} ${styles.closeBtn}`}
+                onClick={closeMenu}
+                aria-label="Menü bezárása"
+              >
+                <CloseIcon />
+              </button>
+            </div>
 
-      <style>{`
-        @media (max-width: 768px) {
-          .nav-links { display: none !important; }
-          .nav-burger { display: flex !important; }
-        }
-      `}</style>
-    </nav>
-  )
-}
+            <ul className={styles.menuList}>
+              {LINKS.map((link, i) => (
+                <motion.li
+                  key={link.id}
+                  initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.18 + i * 0.06, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <a
+                    href={`#${link.id}`}
+                    onClick={(e) => goTo(e, link.id)}
+                    className={`${styles.menuLink} ${active === link.id ? styles.menuActive : ''}`}
+                  >
+                    <span className={styles.menuNum}>{String(i + 1).padStart(2, '0')}</span>
+                    {link.label}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
 
-function NavLink({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        fontFamily: 'var(--font-condensed), sans-serif',
-        fontWeight: 600,
-        fontSize: '12px',
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        color: hov ? 'var(--text)' : 'var(--text-dim)',
-        position: 'relative',
-        padding: '4px 0',
-        transition: 'color 0.2s',
-      }}
-    >
-      {children}
-      <span
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: '1px',
-          background: 'var(--accent)',
-          transform: hov ? 'scaleX(1)' : 'scaleX(0)',
-          transformOrigin: 'left',
-          transition: 'transform 0.25s ease',
-        }}
-      />
-    </button>
+            <motion.div
+              className={styles.menuFoot}
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: reduceMotion ? 0 : 0.45, duration: 0.4 }}
+            >
+              <p className={styles.menuInfo}>
+                {status?.label}
+                {status && <br />}
+                3800 Szikszó, Kassai út 52.
+              </p>
+              <a href={PHONE_HREF} className={styles.menuCall}>
+                <PhoneIcon />
+                {PHONE_LABEL}
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
 function PhoneIcon() {
   return (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 9a16 16 0 006 6l1.18-1.18a2 2 0 012.11-.45c.9.37 1.86.6 2.81.7A2 2 0 0122 16.92z" />
     </svg>
   )
 }
 
+function MenuIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M4 8h16M4 16h16" />
+    </svg>
+  )
+}
+
+function CloseIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  )
+}
