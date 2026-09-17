@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Footer } from '@/components/Footer'
+import { SubpageHeader } from '@/components/SubpageHeader'
 import { CookieConsentBanner } from '@/components/CookieConsentBanner'
 import styles from './page.module.css'
 
 export const metadata: Metadata = {
-  title: 'Adatvédelmi tájékoztató – Varga Gumi',
+  title: 'Adatvédelmi tájékoztató',
+  alternates: { canonical: '/adatvedelem' },
   description: 'Hogyan kezeli a Varga Gumi (Anibal Kft.) weboldala az adatokat: tárhely, Google Térkép, sütik, kapcsolatfelvétel és az Ön jogai.',
 }
 
@@ -25,19 +26,7 @@ const SECTIONS = [
 export default function PrivacyPage() {
   return (
     <>
-      <header className={styles.header}>
-        <div className={`container ${styles.headerInner}`}>
-          <Link href="/" className={styles.logo}>
-            Varga <span className={styles.accent}>Gumi</span>
-          </Link>
-          <Link href="/" className={styles.back}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 12H5M11 18l-6-6 6-6" />
-            </svg>
-            Vissza a főoldalra
-          </Link>
-        </div>
-      </header>
+      <SubpageHeader />
 
       <main className={styles.main}>
         <div className="container">

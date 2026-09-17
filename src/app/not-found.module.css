@@ -1,0 +1,101 @@
+.main {
+  display: flex;
+  align-items: center;
+  min-height: calc(100svh - 72px - 200px);
+  padding: clamp(64px, 10vw, 140px) 0;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(32px, 6vw, 96px);
+}
+
+.code {
+  flex: none;
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: clamp(120px, 18vw, 260px);
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: var(--text);
+  font-variant-numeric: lining-nums;
+}
+
+.accent {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.text {
+  max-width: 520px;
+}
+
+.title {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: clamp(34px, 3.8vw, 52px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.lead {
+  margin-top: 18px;
+  font-size: clamp(16px, 1.3vw, 18px);
+  line-height: 1.65;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btnSolid {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.btnSolid:hover {
+  background: color-mix(in srgb, var(--accent), black 18%);
+}
+
+.btnOutline {
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+
+.btnOutline:hover {
+  border-color: var(--text);
+  background: var(--surface);
+}
+
+@media (max-width: 760px) {
+  .inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import type { MouseEvent } from 'react'
+import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { getOpenStatus } from '@/lib/openingHours'
 import type { OpenStatus } from '@/lib/openingHours'
@@ -60,6 +61,11 @@ export function Navbar() {
     return () => observer.disconnect()
   }, [])
 
+  const closeMenu = () => {
+    setMenuOpen(false)
+    menuBtnRef.current?.focus({ preventScroll: true })
+  }
+
   // Mobil menü: görgetés tiltása, Esc, fókusz
   useEffect(() => {
     if (!menuOpen) {
@@ -81,11 +87,6 @@ export function Navbar() {
       window.removeEventListener('keydown', onKey)
     }
   }, [menuOpen])
-
-  const closeMenu = () => {
-    setMenuOpen(false)
-    menuBtnRef.current?.focus({ preventScroll: true })
-  }
 
   const goTo = (e: MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault()
@@ -110,9 +111,9 @@ export function Navbar() {
           aria-label="Főmenü"
           className={`${styles.pill} ${scrolled ? styles.scrolled : ''}`}
         >
-          <a href="/" onClick={goTop} className={styles.logo}>
+          <Link href="/" onClick={goTop} className={styles.logo}>
             Varga Gumi
-          </a>
+          </Link>
 
           <ul className={styles.links}>
             {LINKS.map((link) => {
@@ -194,9 +195,9 @@ export function Navbar() {
             transition={{ duration: reduceMotion ? 0.15 : 0.55, ease: [0.65, 0, 0.35, 1] }}
           >
             <div className={styles.overlayHead}>
-              <a href="/" onClick={goTop} className={styles.logo}>
+              <Link href="/" onClick={goTop} className={styles.logo}>
                 Varga Gumi
-              </a>
+              </Link>
               <button
                 ref={closeBtnRef}
                 type="button"

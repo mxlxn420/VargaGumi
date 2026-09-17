@@ -1,7 +1,8 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Fraunces, Manrope } from 'next/font/google'
 import './globals.css'
 import { Providers } from '@/components/Providers'
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from '@/lib/site'
 
 const fraunces = Fraunces({
   variable: '--font-display',
@@ -18,23 +19,35 @@ const manrope = Manrope({
 })
 
 export const metadata: Metadata = {
-  title: 'Varga Gumi – Szikszó | Prémium gumiszerviz',
-  description:
-    'Prémium gumiszerviz Szikszón. Gumiszerelés, defektjavítás, centrírozás, futómű beállítás. Kassai út 52.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: 'Varga Gumi – Gumiszerviz Szikszón',
+    template: '%s – Varga Gumi',
+  },
+  description: SITE_DESCRIPTION,
   keywords: [
     'gumiszerviz szikszó',
     'gumiszerelés szikszó',
     'defektjavítás',
     'centrírozás',
-    'futómű beállítás',
+    'futómű-beállítás',
+    'gumitárolás',
     'varga gumi',
   ],
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'Varga Gumi – Szikszó',
-    description: 'Prémium gumiszerviz Szikszón. Kassai út 52.',
+    title: 'Varga Gumi – Gumiszerviz Szikszón',
+    description: SITE_DESCRIPTION,
+    url: '/',
+    siteName: SITE_NAME,
     locale: 'hu_HU',
     type: 'website',
   },
+  twitter: { card: 'summary_large_image' },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#F3EDE3',
 }
 
 export default function RootLayout({
