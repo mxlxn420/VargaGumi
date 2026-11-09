@@ -107,7 +107,7 @@ export function ContactSection() {
             </h2>
           </div>
           <p className={styles.lead} data-contact="intro">
-            Szikszón, a Kassai úton. Bejelentkezés nélkül is fogadjuk, nyitvatartási időben.
+            Szikszón, a Kassai úton. Gumicseréhez hívjon előre időpontért, minden mással nyitvatartási időben bejelentkezés nélkül is jöhet.
           </p>
         </div>
 

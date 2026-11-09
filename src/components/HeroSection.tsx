@@ -17,7 +17,7 @@ const DIRECTIONS_HREF =
 const STATS = [
   { num: '4.6★', label: '73 Google vélemény' },
   { num: '7', label: 'szolgáltatás' },
-  { num: 'H–Szo', label: 'bejelentkezés nélkül is' },
+  { num: 'H–Szo', label: 'gumicseréhez időponttal' },
 ]
 
 export function HeroSection() {

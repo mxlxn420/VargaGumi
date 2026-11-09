@@ -14,7 +14,7 @@ const SERVICES: { kind: Kind; title: string; text: string; tags: string[] }[] = 
     kind: 'mount',
     title: 'Gumiabroncs szerelése',
     text: 'Szezonális gumicsere és új gumik felszerelése – személyautóra, SUV-ra és kisteherautóra is.',
-    tags: ['Szezonális csere', 'Személyautó · SUV · kisteher'],
+    tags: ['Időpont-egyeztetéssel', 'Személyautó · SUV · kisteher'],
   },
   {
     kind: 'repair',

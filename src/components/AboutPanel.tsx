@@ -10,8 +10,8 @@ gsap.registerPlugin(ScrollTrigger)
 
 const FACTS = [
   {
-    title: 'Bejelentkezés nélkül is',
-    text: 'Ugorjon be nyitvatartási időben – előzetes időpontfoglalás nélkül is fogadjuk.',
+    title: 'Gumicseréhez időponttal',
+    text: 'Gumicseréhez hívjon előre, és egyeztessünk időpontot. Defekttel és minden mással nyitvatartási időben bejelentkezés nélkül is jöhet.',
   },
   {
     title: 'Személyautótól a kisteherig',
