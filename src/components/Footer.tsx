@@ -68,6 +68,9 @@ export function Footer() {
             <button type="button" className={styles.link} onClick={reset}>
               Süti beállítások
             </button>
+            <a href="https://martismilan.hu" target="_blank" rel="noopener" className={styles.link}>
+              Weboldal: Martis Milán
+            </a>
           </div>
         </div>
       </div>
