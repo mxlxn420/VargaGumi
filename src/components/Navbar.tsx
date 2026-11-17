@@ -12,6 +12,7 @@ const LINKS = [
   { label: 'Rólunk', id: 'about' },
   { label: 'Szolgáltatások', id: 'services' },
   { label: 'Vélemények', id: 'reviews' },
+  { label: 'GYIK', id: 'faq' },
   { label: 'Kapcsolat', id: 'contact' },
 ]
 

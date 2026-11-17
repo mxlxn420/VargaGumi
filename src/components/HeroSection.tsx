@@ -94,21 +94,23 @@ export function HeroSection() {
       <div className="container">
         <div className={styles.grid}>
           <div className={styles.text}>
-            <p className={styles.eyebrow} data-hero="eyebrow">
-              Varga Gumi
-              <span className={styles.sep} aria-hidden="true" />
-              Gumiszerviz Szikszón
-            </p>
-
-            <h1 id="hero-title" className={styles.title}>
-              <span className={styles.line}>
-                <span className={styles.lineInner} data-hero="line">Defekt?</span>
-              </span>
-              <span className={styles.line}>
-                <span className={`${styles.lineInner} ${styles.accent}`} data-hero="line">Hívjon,</span>
-              </span>
-              <span className={styles.line}>
-                <span className={styles.lineInner} data-hero="line">megoldjuk.</span>
+            {/* A H1 a felirattal együtt: „Varga Gumi – Gumiszerviz Szikszón. Defekt? Hívjon, megoldjuk.” */}
+            <h1 id="hero-title" className={styles.heading}>
+              <span className={styles.eyebrow} data-hero="eyebrow">
+                Varga Gumi{' '}
+                <span className={styles.sep} aria-hidden="true" />
+                {' '}Gumiszerviz Szikszón
+              </span>{' '}
+              <span className={styles.title}>
+                <span className={styles.line}>
+                  <span className={styles.lineInner} data-hero="line">Defekt?</span>
+                </span>{' '}
+                <span className={styles.line}>
+                  <span className={`${styles.lineInner} ${styles.accent}`} data-hero="line">Hívjon,</span>
+                </span>{' '}
+                <span className={styles.line}>
+                  <span className={styles.lineInner} data-hero="line">megoldjuk.</span>
+                </span>
               </span>
             </h1>
 

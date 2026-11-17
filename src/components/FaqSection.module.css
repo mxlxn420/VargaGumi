@@ -1,0 +1,75 @@
+.faq {
+  background: var(--bg);
+  padding: clamp(88px, 12vw, 160px) 0;
+  border-top: 1px solid var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+
+.head {
+  position: sticky;
+  top: calc(var(--nav-h) + 32px);
+}
+
+.eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dim);
+  margin-bottom: 20px;
+}
+
+.title {
+  font-family: var(--font-display), serif;
+  font-weight: 800;
+  font-size: clamp(38px, 4.6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.accent {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.list {
+  border-bottom: 1px solid var(--border-strong);
+}
+
+.item {
+  padding: clamp(20px, 2.2vw, 28px) 0;
+  border-top: 1px solid var(--border-strong);
+}
+
+.q {
+  font-size: clamp(17px, 1.4vw, 19px);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+}
+
+.a {
+  margin-top: 8px;
+  max-width: 60ch;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.6;
+  color: var(--text-dim);
+  text-wrap: pretty;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .head {
+    position: static;
+  }
+}

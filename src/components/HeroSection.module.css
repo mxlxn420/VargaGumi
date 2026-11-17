@@ -34,7 +34,12 @@
   background: var(--border-strong);
 }
 
+.heading {
+  font: inherit;
+}
+
 .title {
+  display: block;
   font-family: var(--font-display), serif;
   font-weight: 800;
   font-size: clamp(52px, 7.2vw, 108px);
